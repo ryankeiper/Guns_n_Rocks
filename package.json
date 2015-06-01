@@ -17,6 +17,8 @@
     "grunt": "^0.4.5",
     "grunt-contrib-jasmine": "^0.8.2",
     "grunt-contrib-watch": "^0.6.1",
-    "phantomjs": "^1.9.17"
+    "node-libs-browser": "^0.5.2",
+    "phantomjs": "^1.9.17",
+    "webpack": "^1.9.10"
   }
 }

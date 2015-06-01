@@ -10,19 +10,19 @@ html, body {
 
 @keyframes twinkle {
     from {background-position: 0 0;}
-    to {background-position: -10000px -10000px;}
+    to {background-position: -10000px 5000px;}
 }
 @-webkit-keyframes twinkle {
     from {background-position: 0 0;}
-    to {background-position: -10000px -10000px;}
+    to {background-position: -10000px 5000px;}
 }
 @-moz-keyframes twinkle {
     from {background-position: 0 0;}
-    to {background-position: -10000px -10000px;}
+    to {background-position: -10000px 5000px;}
 }
 @-ms-keyframes twinkle {
     from {background-position: 0 0;}
-    to {background-position: -10000px -10000px;}
+    to {background-position: -10000px 5000px;}
 }
  
 .stars, .twinkling {
