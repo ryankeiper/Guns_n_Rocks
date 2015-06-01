@@ -21,5 +21,5 @@ $(document).ready(function(){
 });
 
 $(document).on("content:loaded", function(){
-	
+	setInterval(draw(), 300);
 });
