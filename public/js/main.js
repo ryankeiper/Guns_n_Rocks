@@ -26,10 +26,9 @@ var game = function(){
 		this.halfH = 10;
 		this.rotationalVelocity = 7;
 		this.acceleration = .2;
-		// this.maxSpeed = 8;
 		this.thrust = 0;
-		this.laserDelay = 5;
-		this.sinceLastLaser = 0;
+		this.laserDelay = 10;
+		this.sinceLastLaser = 10;
 		this.lasers = [];
 		this.x = window.innerWidth/2;
 		this.y = window.innerHeight/2;
@@ -41,14 +40,13 @@ var game = function(){
 	};
 
 	function NewLaser(){
-		this.dx = 5*Math.cos(Math.PI*(player1.rotation)/180);
-		this.dy = 5*Math.sin(Math.PI*(player1.rotation)/180);
-		this.x = player1.x+player1.halfW;
-		this.y = player1.y+player1.halfH;
-		this.life = 60;
-		this.lifeCtr = 0;
-		this.width = 2;
-		this.height = 2;
+		this.dx = 10*Math.cos(Math.PI*(player1.rotation-90)/180);
+		this.dy = 10*Math.sin(Math.PI*(player1.rotation-90)/180);
+		this.x = player1.x+player1.halfW-2;
+		this.y = player1.y+player1.halfH-2;
+		this.life = 30;
+		this.width = 4;
+		this.height = 4;
 	}
 
 	var player1 = new Player();
@@ -92,15 +90,8 @@ var game = function(){
 			facingX = Math.cos(radians);
 			facingY = Math.sin(radians);
 
-			// var movingXNew = player1.movingX + player1.acceleration * facingX;
-			// var movingYNew = player1.movingY + player1.acceleration * facingY;
-
-			// var currentSpeed = Math.sqrt((movingXNew*movingXNew) + (movingYNew*movingYNew));
-
-			// if(currentSpeed < player1.maxSpeed){
 			player1.movingX += player1.acceleration * facingX;
 			player1.movingY += player1.acceleration * facingY;
-			// }
 
 			player1.thrust = 1;
 		} else {
@@ -116,7 +107,9 @@ var game = function(){
 		}
 
 		if(keyPressList[32] == true){
-
+			if(player1.sinceLastLaser >= player1.laserDelay){
+				fireLasers();
+			}
 		}
 
 		player1.x += player1.movingX;
@@ -135,6 +128,8 @@ var game = function(){
 		}
 		
 		render();
+		updateLasers();
+		renderLasers();
 
 		var radians = player1.rotation * Math.PI/180;
 		ctx.save();
@@ -147,6 +142,7 @@ var game = function(){
 		thrusters();
 
 		ctx.restore();
+		player1.sinceLastLaser++;
 	}
 
 	var ship = function(){
@@ -188,6 +184,35 @@ var game = function(){
 			ctx.lineTo(2, 10);
 			ctx.stroke();
 			ctx.closePath();
+		}
+	}
+
+	var fireLasers = function(){
+		var newLaser = new NewLaser();
+		player1.lasers.push(newLaser);
+		player1.sinceLastLaser = 0;
+		console.log(newLaser.x, newLaser.y, player1.x, player1.y);
+		console.log(player1.lasers);
+	}
+
+	var updateLasers = function(){
+		for(var i in player1.lasers){
+			var laser = player1.lasers[i];
+			laser.life--;
+			if(laser.x > window.innerWidth + laser.width || laser.x < -laser.width || laser.y > window.innerHeight + laser.height || laser.y < -laser.height || laser.life <= 0){
+				player1.lasers.splice(i, 1);
+			} else {
+				laser.x += laser.dx;
+				laser.y += laser.dy;
+			}
+		}
+	}
+
+	var renderLasers = function(){
+		for(var i in player1.lasers){
+			var laser = player1.lasers[i];
+			ctx.fillStyle = "#67C8FF";
+			ctx.fillRect(laser.x, laser.y, laser.width, laser.height);
 		}
 	}
 
