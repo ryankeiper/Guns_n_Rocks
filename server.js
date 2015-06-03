@@ -4,6 +4,6 @@ var port = 3000
 
 app.use(express.static(__dirname + '/public'));
 
-app.listen(port, function(){
+app.listen(process.env.PORT || port, function(){
 	console.log("Listening on port", port);
 });
