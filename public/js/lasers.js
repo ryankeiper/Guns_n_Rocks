@@ -30,7 +30,7 @@ NewLaser.updateLasers = function(player){
 NewLaser.renderLasers = function(player, ctx){
 	for(var i in player.lasers){
 		var laser = player.lasers[i];
-		ctx.fillStyle = "#67C8FF";
+		ctx.fillStyle = player.laserColor;
 		ctx.fillRect(laser.x, laser.y, laser.width, laser.height);
 	}
 }

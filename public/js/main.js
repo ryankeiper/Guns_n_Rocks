@@ -8,14 +8,15 @@ var game = function(){
 		return;
 	}
 
-	var player = new Player(window.innerWidth/2, window.innerHeight*5/6, -90, '#8ED6FF','blue', "#67C8FF");
+	var player = new Player(window.innerWidth*1/6, window.innerHeight*1/6, 45, '#8ED6FF','blue', "#67C8FF");
+	var player2 = new Player(window.innerWidth*5/6, window.innerHeight*1/6, 135, '#FF6666','#8B0000', "#FF2400");
 
 	var xMin = 0;
 	var xMax = window.innerWidth;
 	var yMin = 0;
 	var yMax = window.innerHeight;
 
-	var players = [];
+	var players = [player, player2];
 	var particles = [];
 
 	var render = function(){
@@ -24,27 +25,21 @@ var game = function(){
 	}
 
 	var gameFrame = function(){
-
-		Player.checkInputs(player);
+		Player.checkInputs(player, player2);
 
 		Player.updatePlayer(player, xMax, yMax);
-		
+		if(players[1]){ Player.updatePlayer(players[1], xMax, yMax); }
+
 		render();
 		NewLaser.updateLasers(player);
 		NewLaser.renderLasers(player, ctx);
+		if(players[1]){
+			NewLaser.updateLasers(players[1]);
+			NewLaser.renderLasers(players[1], ctx);
+		}
 
-		var radians = player.rotation * Math.PI/180;
-		ctx.save();
-		ctx.setTransform(1,0,0,1,0,0);
-
-		ctx.translate(player.x+player.halfW,player.y+player.halfH);
-		ctx.rotate(radians);
-
-		player.ship(ctx);
-		player.thrusters(ctx);
-
-		ctx.restore();
-		player.sinceLastLaser++;
+		Player.renderPlayer(player, ctx);
+		if(players[1]){ Player.renderPlayer(players[1], ctx); }
 	}
 
 	const FRAME_RATE = 30;
