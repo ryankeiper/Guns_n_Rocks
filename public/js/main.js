@@ -1,3 +1,5 @@
+var socket = io();
+
 var game = function(){
 
 	var canvas = document.getElementById('canvas1');
@@ -8,8 +10,8 @@ var game = function(){
 		return;
 	}
 
-	var player = new Player(window.innerWidth*3/6, window.innerHeight*1/6, 0, '#8ED6FF','blue', "#67C8FF");
-	var player2 = new Player(window.innerWidth*4/6, window.innerHeight*1/6, 180, '#FF6666','#8B0000', "#FF2400");
+	var player = new Player(window.innerWidth*1/6, window.innerHeight*1/6, 45, '#8ED6FF','blue', "#67C8FF");
+	var player2 = new Player(window.innerWidth*5/6, window.innerHeight*1/6, 135, '#FF6666','#8B0000', "#FF2400");
 
 	var xMin = 0;
 	var xMax = window.innerWidth;
@@ -19,7 +21,7 @@ var game = function(){
 	alpha = 0;
 
 	var players = [player, player2];
-	var particles = [];
+	var shards = [];
 
 	var render = function(){
 		ctx.canvas.width  = window.innerWidth;
@@ -32,6 +34,12 @@ var game = function(){
 
 		Player.updatePlayer(player, xMax, yMax);
 		if(players[1]){ Player.updatePlayer(players[1], xMax, yMax); }
+		if(shards.length > 0){
+			for(var i in shards){
+				shards[i].x += shards[i].dx;
+				shards[i].y += shards[i].dy;
+			}
+		}
 
 		render();
 		NewLaser.updateLasers(player);
@@ -54,19 +62,23 @@ var game = function(){
 
 	document.onkeydown = function(e){
 		e = e ? e : window.event;
-		player.keyPressList[e.keyCode] = true;
+		socket.emit('keydown', e.keyCode);
 	};
 
 	document.onkeyup = function(e){
 		e = e ? e : window.event;
-		player.keyPressList[e.keyCode] = false;
+		socket.emit('keyup', e.keyCode);
 	}
-
+	socket.on('keydown', function(code){
+		player.keyPressList[code] = true;
+	});
+	socket.on('keyup', function(code){
+		player.keyPressList[code] = false;
+	});
 
 }
 
 $(document).ready(function(){
-
 	game();
 
 });

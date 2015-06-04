@@ -19,8 +19,7 @@ function Player(x, y, rotation, fill, outline, laserColor) {
 	this.facingY = 0;
 	this.movingX = 0;
 	this.movingY = 0;
-	this.fill = fill;
-	this.outline = outline;
+	this.shardColor = outline;
 	this.laserColor = laserColor;
 	this.health = 3;
 	this.lives = 3;

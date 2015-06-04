@@ -1,3 +1,16 @@
+function Shrapnel(x, y, color) {
+	this.dx = Math.random()*3;
+	this.dy = Math.random()*3;
+	this.color = color;
+	this.life = Math.floor(Math.random()*30);
+	this.x = x;
+	this.y = y;
+}
+
+var hit = function(x, y, numShards){
+	
+}
+
 var collisionCheck = function(object1, object2){
 	var ob1Top = object1.y;
 	var ob1Left = object1.x;
