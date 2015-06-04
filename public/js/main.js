@@ -8,13 +8,15 @@ var game = function(){
 		return;
 	}
 
-	var player = new Player(window.innerWidth*1/6, window.innerHeight*1/6, 45, '#8ED6FF','blue', "#67C8FF");
-	var player2 = new Player(window.innerWidth*5/6, window.innerHeight*1/6, 135, '#FF6666','#8B0000', "#FF2400");
+	var player = new Player(window.innerWidth*3/6, window.innerHeight*1/6, 0, '#8ED6FF','blue', "#67C8FF");
+	var player2 = new Player(window.innerWidth*4/6, window.innerHeight*1/6, 180, '#FF6666','#8B0000', "#FF2400");
 
 	var xMin = 0;
 	var xMax = window.innerWidth;
 	var yMin = 0;
 	var yMax = window.innerHeight;
+	ctx.globalAlpha = 1;
+	alpha = 0;
 
 	var players = [player, player2];
 	var particles = [];
@@ -25,6 +27,7 @@ var game = function(){
 	}
 
 	var gameFrame = function(){
+		ctx.globalAlpha = 1;
 		Player.checkInputs(player, player2);
 
 		Player.updatePlayer(player, xMax, yMax);
@@ -37,9 +40,11 @@ var game = function(){
 			NewLaser.updateLasers(players[1]);
 			NewLaser.renderLasers(players[1], ctx);
 		}
-
+		ctx.globalAlpha = alpha;
 		Player.renderPlayer(player, ctx);
 		if(players[1]){ Player.renderPlayer(players[1], ctx); }
+		if(alpha <= 1) alpha += .01;
+		testForCollisions(players);
 	}
 
 	const FRAME_RATE = 30;
@@ -56,6 +61,7 @@ var game = function(){
 		e = e ? e : window.event;
 		player.keyPressList[e.keyCode] = false;
 	}
+
 
 }
 
