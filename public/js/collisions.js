@@ -8,7 +8,7 @@ function Shrapnel(x, y, color) {
 }
 
 var hit = function(x, y, numShards){
-	
+
 }
 
 var collisionCheck = function(object1, object2){
@@ -29,25 +29,28 @@ var collisionCheck = function(object1, object2){
 }
 
 var testForCollisions = function(players){
-	if(collisionCheck(players[0], players[1])){
-		console.log("players collided!");
-		for(var i in players){
-			players[i].health = 0;
-			players[i].lives--;
-		}
+	if(players.length > 1) {
+		for(var i = 0; i < players.length; i++){
+			for(var j = 0; j < players.length; j++){
+				if(collisionCheck(players[i], players[j]) && j != i){
+					console.log("Players collided!")
+					players[i].health = 0;
+					players[j].health = 0;
+				}
+			};
+		};
 	}
-	for(var i in players[0].lasers){
-		if(collisionCheck(players[0].lasers[i], players[1])){
-			console.log("Player 1 shot Player 2!");
-			players[0].lasers.splice(i, 1);
-			players[1].health--;
-		}
-	}
-	for(var i in players[1].lasers){
-		if(collisionCheck(players[1].lasers[i], players[0])){
-			console.log("Player 2 shot Player 1!");
-			players[1].lasers.splice(i, 1);
-			players[0].health--;
+	if(players.length > 1){
+		for(var i = 0; i < players.length; i++){
+			for(var j = 0; j < players.length; j++){
+				for(var k = 0; k < players[i].lasers.length; k++){
+					if(collisionCheck(players[i].lasers[k], players[j]) && j != i){
+						console.log("Player", i+1, "shot Player", j+1, "!");
+						players[i].lasers.splice(i, 1);
+						players[j].health--;
+					}					
+				}
+			}
 		}
 	}
 }

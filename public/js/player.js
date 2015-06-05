@@ -1,4 +1,5 @@
-function Player(x, y, rotation, fill, outline, laserColor) {
+function Player(x, y, rotation, fill, outline, laserColor, id) {
+	this.id = id;
 	this.width = 20;
 	this.height = 20;
 	this.halfW = 10;
@@ -9,11 +10,8 @@ function Player(x, y, rotation, fill, outline, laserColor) {
 	this.laserDelay = 10;
 	this.sinceLastLaser = 10;
 	this.lasers = [];
-	this.startX = x;
-	this.startY = y;
 	this.x = x;
 	this.y = y;
-	this.startRot = rotation;
 	this.rotation = rotation;
 	this.facingX = 0;
 	this.facingY = 0;
@@ -72,92 +70,110 @@ function Player(x, y, rotation, fill, outline, laserColor) {
 	};
 };
 
-Player.checkInputs = function(player, player2){
-	if(player.keyPressList[38] == true){
-		var radians = (player.rotation) * Math.PI/180;
-		player.facingX = Math.cos(radians);
-		player.facingY = Math.sin(radians);
-
-		player.movingX += player.acceleration * player.facingX;
-		player.movingY += player.acceleration * player.facingY;
-
-		player.thrust = 1;
-	} else {
-		player.thrust = 0;
+Player.toJSON = function(player){
+	return {
+		id: player.id,
+		thrust: player.thrust,
+		sinceLastLaser: player.sinceLastLaser,
+		x: player.x,
+		y: player.y,
+		lasers: player.lasers,
+		rotation: player.rotation,
+		facingX: player.facingX,
+		facingY: player.facingY,
+		movingX: player.movingX,
+		movingY: player.movingY,
+		health: player.health,
+		keyPressList: player.keyPressList
 	}
+}
 
-	if(player.keyPressList[87] == true){
-		var radians2 = (player2.rotation) * Math.PI/180;
-		player2.facingX = Math.cos(radians2);
-		player2.facingY = Math.sin(radians2);
-
-		player2.movingX += player2.acceleration * player2.facingX;
-		player2.movingY += player2.acceleration * player2.facingY;
-
-		player2.thrust = 1;
-	} else {
-		player2.thrust = 0;
-	}
-
-	if(player.keyPressList[37] == true){
-		player.rotation -= player.rotationalVelocity;
-	}
-
-	if(player.keyPressList[65] == true){
-		player2.rotation -= player2.rotationalVelocity;
-	}
-
-	if(player.keyPressList[39] == true){
-		player.rotation += player.rotationalVelocity;
-	}
-
-	if(player.keyPressList[68] == true){
-		player2.rotation += player2.rotationalVelocity;
-	}
-
-	if(player.keyPressList[32] == true){
-		if(player.sinceLastLaser >= player.laserDelay){
-			NewLaser.fireLasers(player);
+Player.takeServerData = function(players, serverData){
+	for(var i = 0; i < players.length; i++){
+		for(var j = 0; j < serverData.length; j++){
+			if(players[i].id = serverData[j].id){
+				players[i].thrust = serverData[j].thrust;
+				players[i].sinceLastLaser = serverData[j].sinceLastLaser;
+				players[i].x = serverData[j].x;
+				players[i].y = serverData[j].y;
+				players[i].lasers = serverData[j].lasers;
+				players[i].rotation = serverData[j].rotation;
+				players[i].facingX = serverData[j].facingX;
+				players[i].facingY = serverData[j].facingY;
+				players[i].movingX = serverData[j].movingX;
+				players[i].movingY = serverData[j].movingY;
+				players[i].health = serverData[j].health;
+				players[i].keyPressList = serverData[j].keyPressList;
+			}
 		}
 	}
+}
 
-	if(player.keyPressList[16] == true){
-		if(player2.sinceLastLaser >= player2.laserDelay){
-			NewLaser.fireLasers(player2);
+Player.checkInputs = function(players){
+	for(var i = 0; i < players.length; i++){	
+		if(players[i].keyPressList[38] == true){
+			var radians = (players[i].rotation) * Math.PI/180;
+			players[i].facingX = Math.cos(radians);
+			players[i].facingY = Math.sin(radians);
+
+			players[i].movingX += players[i].acceleration * players[i].facingX;
+			players[i].movingY += players[i].acceleration * players[i].facingY;
+
+			players[i].thrust = 1;
+		} else {
+			players[i].thrust = 0;
+		}
+
+		if(players[i].keyPressList[37] == true){
+			players[i].rotation -= players[i].rotationalVelocity;
+		}
+
+		if(players[i].keyPressList[39] == true){
+			players[i].rotation += players[i].rotationalVelocity;
+		}
+
+		if(players[i].keyPressList[32] == true){
+			if(players[i].sinceLastLaser >= players[i].laserDelay){
+				NewLaser.fireLasers(players[i]);
+			}
 		}
 	}
 };
 
-Player.updatePlayer = function(player, xMax, yMax){
-	player.x += player.movingX;
-	player.y += player.movingY;
+Player.updatePlayer = function(players, xMax, yMax){
+	for(var i = 0; i < players.length; i++){
+		players[i].x += players[i].movingX;
+		players[i].y += players[i].movingY;
 
-	if(player.x > xMax){
-		player.x = -player.width;
-	} else if(player.x < -player.width) {
-		player.x = xMax;
-	}
+		if(players[i].x > xMax){
+			players[i].x = -players[i].width;
+		} else if(players[i].x < -players[i].width) {
+			players[i].x = xMax;
+		}
 
-	if(player.y > yMax){
-		player.y = -player.height;
-	} else if(player.y < -player.height) {
-		player.y = yMax;
+		if(players[i].y > yMax){
+			players[i].y = -players[i].height;
+		} else if(players[i].y < -players[i].height) {
+			players[i].y = yMax;
+		}
 	}
 };
 
-Player.renderPlayer = function(player, ctx){
-	var radians = player.rotation * Math.PI/180;
-	ctx.save();
-	ctx.setTransform(1,0,0,1,0,0);
+Player.renderPlayer = function(players, ctx){
+	for(var i = 0; i < players.length; i++){
+		var radians = players[i].rotation * Math.PI/180;
+		ctx.save();
+		ctx.setTransform(1,0,0,1,0,0);
 
-	ctx.translate(player.x+player.halfW,player.y+player.halfH);
-	ctx.rotate(radians);
+		ctx.translate(players[i].x+players[i].halfW,players[i].y+players[i].halfH);
+		ctx.rotate(radians);
 
-	player.ship(ctx);
-	player.thrusters(ctx);
+		players[i].ship(ctx);
+		players[i].thrusters(ctx);
 
-	ctx.restore();
-	player.sinceLastLaser++;
+		ctx.restore();
+		players[i].sinceLastLaser++;
+	}
 }
 
 

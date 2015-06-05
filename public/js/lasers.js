@@ -14,23 +14,31 @@ NewLaser.fireLasers = function(player){
 	player.sinceLastLaser = 0;
 }
 
-NewLaser.updateLasers = function(player){
-	for(var i in player.lasers){
-		var laser = player.lasers[i];
-		laser.life--;
-		if(laser.x > window.innerWidth + laser.width || laser.x < -laser.width || laser.y > window.innerHeight + laser.height || laser.y < -laser.height || laser.life <= 0){
-			player.lasers.splice(i, 1);
-		} else {
-			laser.x += laser.dx;
-			laser.y += laser.dy;
+NewLaser.updateLasers = function(players){
+	for(var i in players){	
+		for(var j in players[i].lasers){
+			var laser = players[i].lasers[j];
+			laser.life--;
+			if(laser.x > window.innerWidth + laser.width || laser.x < -laser.width || laser.y > window.innerHeight + laser.height || laser.y < -laser.height || laser.life <= 0){
+				players[i].lasers.splice(i, 1);
+			} else {
+				laser.x += laser.dx;
+				laser.y += laser.dy;
+			}
 		}
 	}
 }
 
-NewLaser.renderLasers = function(player, ctx){
-	for(var i in player.lasers){
-		var laser = player.lasers[i];
-		ctx.fillStyle = player.laserColor;
-		ctx.fillRect(laser.x, laser.y, laser.width, laser.height);
+NewLaser.renderLasers = function(players, ctx){
+	for(var i in players){
+		for(var j in players[i].lasers){
+			var laser = players[i].lasers[j];
+			ctx.fillStyle = players[i].laserColor;
+			ctx.fillRect(laser.x, laser.y, laser.width, laser.height);
+		}
 	}
 }
+
+
+
+
